@@ -15,39 +15,44 @@ export default class Login extends Component {
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
+    handleChange(event) {
+        this.setState({
+            [event.target.name]: event.target.value,
+            errorText: ""
+        });
+    }
+
    handleSubmit(event) {
-       axios.post("https://api.devcamp.space/sessions",
-       {
-           client: {
-               email: this.state.email,
-               password: this.state.password
-           }
-       },
-       { widthCredentials: true }
-       ).then(response => {
+       axios
+        .post(
+            "https://api.devcamp.space/sessions",
+            {
+              client: {
+                email: this.state.email,
+                password: this.state.password
+              }
+            },
+            { widthCredentials: true }
+        )
+        .then(response => {
            if (response.data.status === 'created') {
-               console.log("You can come in...");
+               this.props.handleSuccessfulAuth();
            } else {
                this.setState({
                    errorText: "Wrong email or password"
-               })
+               });
+               this.props.handleUnsuccessfulAuth();
            }
        }).catch(error => {
            console.log("some error occurred", error);
            this.setState({
                errorText: "An error occurred"
            });
+           this.props.handleUnsuccessfulAuth();
        });
 
 
        event.preventDefault();
-   }
-
-   handleChange(event) {
-       this.setState({
-           [event.target.name]: event.target.value,
-           errorText: ""
-       });
    }
 
    render() {
